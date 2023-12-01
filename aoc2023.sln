@@ -7,6 +7,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "template", "template\templa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day01", "day01\day01.vcxproj", "{FA1D17E9-7C12-4F96-8585-83978B842B3F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{30B4F31A-5685-4B4E-8627-045CCE54E03F}"
+	ProjectSection(SolutionItems) = preProject
+		include\codeAnalysis.h = include\codeAnalysis.h
+		include\constants.h = include\constants.h
+		include\getdata.h = include\getdata.h
+		include\hash.h = include\hash.h
+		include\int.h = include\int.h
+		include\posVector-RC.h = include\posVector-RC.h
+		include\posVector-XY.h = include\posVector-XY.h
+		include\posVector-XYZ.h = include\posVector-XYZ.h
+		include\stopwatch.h = include\stopwatch.h
+		include\stringstuff.h = include\stringstuff.h
+		include\thrower.h = include\thrower.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

@@ -1,5 +1,6 @@
+#include <print>
+
 #include "include/codeAnalysis.h"
-#include "include/print.h"
 #include "include/thrower.h"
 #include "include/getdata.h"
 
@@ -14,7 +15,7 @@ try
 }
 catch(std::exception const &e)
 {
-    print("{}",e.what());
+    std::print("{}",e.what());
 }
 
 
