@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{30B4
 		include\thrower.h = include\thrower.h
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "day02", "day02\day02.vcxproj", "{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -46,6 +48,14 @@ Global
 		{FA1D17E9-7C12-4F96-8585-83978B842B3F}.Release|x64.Build.0 = Release|x64
 		{FA1D17E9-7C12-4F96-8585-83978B842B3F}.Release|x86.ActiveCfg = Release|Win32
 		{FA1D17E9-7C12-4F96-8585-83978B842B3F}.Release|x86.Build.0 = Release|Win32
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Debug|x64.ActiveCfg = Debug|x64
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Debug|x64.Build.0 = Debug|x64
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Debug|x86.ActiveCfg = Debug|Win32
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Debug|x86.Build.0 = Debug|Win32
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Release|x64.ActiveCfg = Release|x64
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Release|x64.Build.0 = Release|x64
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Release|x86.ActiveCfg = Release|Win32
+		{4B09F5CF-CB82-4F75-8CAD-30A2DA6D6736}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
