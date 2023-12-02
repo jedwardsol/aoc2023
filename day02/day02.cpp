@@ -24,16 +24,12 @@ auto readRound(std::string_view line)       // 1 red, 3 blue, 11 green
 {
     Round round{};
 
-    auto balls = split(line, ",");
-
-    for(auto ball : balls)
+    for (auto ball : std::views::split(line, ","))
     {
-        std::ispanstream stream{ball};
-
         int         count;
         std::string colour;
 
-        stream >> count >> colour;
+        std::ispanstream{ ball } >> count >> colour;
 
         if(colour == "red")
         {
