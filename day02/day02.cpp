@@ -47,9 +47,7 @@ auto readRound(std::string_view line)       // 1 red, 3 blue, 11 green
         {
             throw_runtime_error("bad colour");
         }
-
     }
-
 
     return round;
 }
