@@ -89,7 +89,7 @@ auto readGames()
 
 
 
-int validate(std::vector<Game> const &games,  Round const &target)
+int sumValidGames(std::vector<Game> const &games,  Round const &target)
 {
     int sum{};
 
@@ -119,12 +119,38 @@ int validate(std::vector<Game> const &games,  Round const &target)
     return sum;
 }
 
+
+
+int64_t sumGamePowers(std::vector<Game> const& games)
+{
+    int64_t sum{};
+
+    for (auto const &game : games)
+    {
+        Round minimum{};
+
+        for (auto& round : game.rounds)
+        {
+            minimum.red   = std::max(minimum.red,round.red);
+            minimum.blue  = std::max(minimum.blue, round.blue);
+            minimum.green = std::max(minimum.green, round.green);
+        }
+
+        sum+= minimum.red*minimum.green*minimum.blue;            
+    }
+
+    return sum;
+}
+
+
+
 int main()
 try
 {
     auto games = readGames();
 
-    std::print("part 1 : {}\n", validate(games,{ 12 , 13 , 14 }));
+    std::print("part 1 : {}\n", sumValidGames(games,{ 12 , 13 , 14 }));
+    std::print("part 2 : {}\n", sumGamePowers(games));
 }
 catch(std::exception const &e)
 {
