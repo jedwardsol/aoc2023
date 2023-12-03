@@ -8,15 +8,21 @@
 #include "include/int.h"
 
 
-
-using Symbols = std::map<Pos, char>;
-
 struct Number
 {
-    int number;
-    int len;
+    int     number{};
+    int     len{};
+    bool    nextToSymbol{};
 };
 
+struct Symbol
+{
+    char                symbol{};
+    std::vector<int>    adjcentNumbers{};
+};
+
+
+using Symbols = std::map<Pos, Symbol>;
 using Numbers = std::map<Pos, Number>;
 
 
@@ -44,7 +50,7 @@ auto parse()
             }
             else if(line[col]!='.')
             {
-                symbols[{row, col}] = line[col];
+                symbols[{row, col}] = {line[col]};
                 col++;
             }
             else
@@ -57,34 +63,35 @@ auto parse()
     return std::make_pair(symbols, numbers);
 }
 
-// sum numbers adjacent to a symbol
-auto isAdjacent(Symbols const &symbols, Pos pos, int len)
+
+void findAdjacencies(Symbols &symbols, Numbers &numbers)
 {
-    for(int row=pos.row-1; row <= pos.row+1;row++)
+    for(auto &[pos,number] : numbers)
     {
-        for(int col=pos.col-1; col <= pos.col+len;col++)
+        for(int row=pos.row-1; row <= pos.row+1;row++)
         {
-            if(symbols.contains({row,col}))
+            for(int col=pos.col-1; col <= pos.col+number.len;col++)
             {
-                return true;
+                if(symbols.contains({row,col}))
+                {
+                    number.nextToSymbol=true;
+                    symbols[{row,col}].adjcentNumbers.push_back(number.number);
+                }
             }
         }
     }
-
-    return false;
 }
 
 
-auto part1(Symbols const &symbols, Numbers const &numbers)
+// sum numbers adjacent to a symbol
+auto part1(Numbers const &numbers)
 {
     int sum{};
 
     for(auto [pos,number] : numbers)
     {
-//      std::print("{} : {}\n",number.number,isAdjacent(symbols,pos,number.len));
-        if(isAdjacent(symbols,pos,number.len))
+        if(number.nextToSymbol)
         {
-            
             sum+=number.number;            
         }
     }
@@ -93,12 +100,36 @@ auto part1(Symbols const &symbols, Numbers const &numbers)
 }
 
 
+// gears are '*' next to 2 numbers.  return sum of products of gears' neighbours
+auto part2(Symbols const &symbols,Numbers const &numbers)
+{
+    int sum{};
+
+    for(auto &[pos,symbol] : symbols)
+    {
+        if(   symbol.symbol                == '*'
+           && symbol.adjcentNumbers.size() == 2)
+        {
+            sum +=  symbol.adjcentNumbers[0]
+                  * symbol.adjcentNumbers[1];
+        }
+    }
+
+    return sum;
+}
+
+
+
+
 int main()
 try
 {
     auto [symbols, numbers] = parse();
 
-    std::print("Part 1 = {}\n", part1(symbols,numbers));
+    findAdjacencies(symbols,numbers);
+
+    std::print("Part 1 = {}\n", part1(numbers));
+    std::print("Part 2 = {}\n", part2(symbols,numbers));
 
 }
 catch(std::exception const& e)
