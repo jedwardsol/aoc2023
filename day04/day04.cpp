@@ -6,11 +6,11 @@
 #include "include/thrower.h"
 #include "include/getdata.h"
 #include "include/stringstuff.h"
-
+#include "include/int.h"
 
 struct Card
 {
-    int             count{};
+    int64_t         count{};
     std::set<int>   winners;
     std::set<int>   numbers;
 };
@@ -58,26 +58,20 @@ std::vector<Card> parse()
 }
 
 
-int score(Card const& card)
+int part1Score(Card const& card)
 {
-    int score{};
+    std::set<int> intersection;
 
-    for(auto number : card.numbers)
+    std::ranges::set_intersection(card.winners, card.numbers, std::inserter(intersection, intersection.begin()));
+
+    if(intersection.size() == 0)
     {
-        if(card.winners.contains(number))
-        {
-            if(score)
-            {
-                score *= 2;
-            }
-            else
-            {
-                score = 1;
-            }
-        }
+        return 0;
     }
-
-    return score;
+    else
+    {
+        return 1 << (intersection.size() - 1);
+    }
 }
 
 int part1(std::vector<Card> const& cards)
@@ -86,11 +80,42 @@ int part1(std::vector<Card> const& cards)
 
     for(auto& card : cards)
     {
-        total += score(card);
+        total += part1Score(card);
     }
 
     return total;
 }
+
+auto part2Score(Card const& card)
+{
+    std::set<int> intersection;
+
+    std::ranges::set_intersection(card.winners, card.numbers, std::inserter(intersection, intersection.begin()));
+
+    return intersection.size();
+}
+
+
+auto part2(std::vector<Card>& cards)
+{
+
+    for(int i = 0; i < isize(cards); i++)
+    {
+        auto& card = cards[i];
+        auto  winners = part2Score(card);
+
+        for(int j = 1; j <= winners && (i + j) < cards.size(); j++)
+        {
+            cards[i+j].count += card.count;
+        }
+    }
+
+    auto totalCards = std::ranges::fold_left(cards | std::views::transform(&Card::count), 0, std::plus{});              // ranges accumulate with projection
+
+    return totalCards;
+}
+
+
 
 
 int main()
@@ -99,6 +124,7 @@ try
     auto cards = parse();
 
     std::print("Part 1 : {}\n", part1(cards));
+    std::print("Part 2 : {}\n", part2(cards));
 
 }
 catch(std::exception const& e)
@@ -111,5 +137,10 @@ catch(std::exception const& e)
 
 // --------------------------
 std::istringstream testInput{
-R"(
+R"(Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
+Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
+Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
+Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
+Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
+Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
 )" };
