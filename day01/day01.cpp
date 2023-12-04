@@ -6,7 +6,7 @@
 #include "include/getdata.h"
 
 
-int valueOf1(std::string const &line)
+int valueOf1(std::string const& line)
 {
     auto first = line.find_first_of("0123456789");
     auto last = line.find_last_of("0123456789");
@@ -14,7 +14,7 @@ int valueOf1(std::string const &line)
     return (line[first] - '0') * 10 + (line[last] - '0');
 }
 
-int valueOf2(std::string line)
+auto valueOf2(std::string line)
 {
     std::array<std::string_view, 20>     words
     {
@@ -37,19 +37,17 @@ int valueOf2(std::string line)
     assert(first >= 1 && first <= 9);
     assert(last >= 1 && last <= 9);
 
-    int result = first * 10 + last;
-
-    return result;
+    return  first * 10 + last;
 }
 
 
 int main()
 try
 {
-    int part1Sum{};
-    int part2Sum{};
+    int64_t part1Sum{};
+    int64_t part2Sum{};
 
-    for(auto const &line : getDataLines())
+    for(auto const& line : getDataLines())
     {
         part1Sum += valueOf1(line);
         part2Sum += valueOf2(line);
@@ -60,7 +58,7 @@ try
     std::print("Part 2 : {}\n", part2Sum);
 
 }
-catch(std::exception const &e)
+catch(std::exception const& e)
 {
     std::print("{}", e.what());
 }
