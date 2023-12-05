@@ -1,13 +1,13 @@
 #include <chrono>
 
 
-class stopwatch
+class Stopwatch
 {
     using Clock = std::chrono::steady_clock;
 
 public:
 
-    stopwatch() : start{Clock::now()}
+    Stopwatch() : start{Clock::now()}
     {
     }
 

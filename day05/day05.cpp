@@ -8,6 +8,7 @@ using namespace std::literals;
 #include "include/thrower.h"
 #include "include/getdata.h"
 #include "include/stringstuff.h"
+#include "include/stopwatch.h"
 
 
 struct Range
@@ -62,7 +63,7 @@ auto readRanges(std::vector<std::string> const &lines,std::string_view  mapName)
 
 int64_t     convert(int64_t     attribute, Map const &map)
 {
-    for(auto range : map)
+    for(auto &range : map)
     {
         if(    attribute >= range.sourceStart
            &&  attribute  < range.sourceStart+range.length)
@@ -100,6 +101,41 @@ void part1(std::string_view line, Almanac &almanac)  // seeds: 28965817 30217000
 }
 
 
+void part2(std::string_view line, Almanac &almanac)  // seeds: 28965817 302170009
+{
+    auto [header,numbers] = splitIn2(line,':');
+
+    int64_t             start{};
+    int64_t             length{};
+    int64_t             minLocation{std::numeric_limits<int64_t>::max()};
+    int64_t             count{};
+
+    std::ispanstream    stream{numbers};
+
+    Stopwatch           sw;
+
+    while(stream >> start >> length)
+    {
+        for(auto seed = start; seed < start+length; seed++)
+        {
+            auto soil           = convert(seed,        almanac.seed2soil);
+            auto fertilizer     = convert(soil,        almanac.soil2fertilizer     );
+            auto water          = convert(fertilizer,  almanac.fertilizer2water    );
+            auto light          = convert(water,       almanac.water2light         );
+            auto temperature    = convert(light,       almanac.light2temperature   );
+            auto humidity       = convert(temperature, almanac.temperature2humidity);
+            auto location       = convert(humidity,    almanac.humidity2location   );
+
+            minLocation        = std::min(location,minLocation);
+            count++;
+        }
+    }
+
+    std::print("Part 2  :   {}   ({} seeds in {} seconds)\n",minLocation,count,sw.seconds());
+
+    // Part 2  :   79004094   (1975502102 seeds in 133.305586 seconds)
+    // can definitely be cleverer!
+}
 
 
 int main()
@@ -119,8 +155,7 @@ try
     };
 
     part1(lines[0], almanac);
-//  part1(lines[0], almanac);
-
+    part2(lines[0], almanac);
 }
 catch(std::exception const &e)
 {
