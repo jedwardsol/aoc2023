@@ -9,17 +9,6 @@ using namespace std::literals;
 #include "include/getdata.h"
 #include "include/stringstuff.h"
 
-struct Seed
-{
-    int64_t     seed;
-    int64_t     soil;
-    int64_t     fertilizer;
-    int64_t     water;
-    int64_t     light;
-    int64_t     temperature;
-    int64_t     humidity;
-    int64_t     location;
-};
 
 struct Range
 {
@@ -30,23 +19,17 @@ struct Range
 
 using Map = std::vector<Range>;
 
-
-auto readSeeds(std::string_view line)  // seeds: 28965817 302170009
+struct Almanac
 {
-    std::vector<Seed>       seeds;
+    Map     seed2soil;
+    Map     soil2fertilizer;
+    Map     fertilizer2water;
+    Map     water2light;
+    Map     light2temperature;
+    Map     temperature2humidity;
+    Map     humidity2location;
+};
 
-    auto [header,numbers] = splitIn2(line,':');
-
-    std::ispanstream    stream{numbers};
-    Seed                seed{};
-
-    while(stream >> seed.seed)
-    {
-        seeds.push_back(seed);
-    }
-
-    return seeds;
-}
 
 auto readRanges(std::vector<std::string> const &lines,std::string_view  mapName)
 {
@@ -91,39 +74,52 @@ int64_t     convert(int64_t     attribute, Map const &map)
     return attribute;
 }
 
+void part1(std::string_view line, Almanac &almanac)  // seeds: 28965817 302170009
+{
+    auto [header,numbers] = splitIn2(line,':');
+
+    int64_t             seed{};
+    int64_t             minLocation{std::numeric_limits<int64_t>::max()};
+
+    std::ispanstream    stream{numbers};
+
+    while(stream >> seed)
+    {
+        auto soil           = convert(seed,        almanac.seed2soil);
+        auto fertilizer     = convert(soil,        almanac.soil2fertilizer     );
+        auto water          = convert(fertilizer,  almanac.fertilizer2water    );
+        auto light          = convert(water,       almanac.water2light         );
+        auto temperature    = convert(light,       almanac.light2temperature   );
+        auto humidity       = convert(temperature, almanac.temperature2humidity);
+        auto location       = convert(humidity,    almanac.humidity2location   );
+
+        minLocation        = std::min(location,minLocation);
+    }
+
+    std::print("Part 1  :   {}\n",minLocation);
+}
+
+
+
 
 int main()
 try
 {
     auto    lines                = getDataLines();
 
-    auto    seeds                = readSeeds (lines[0]);
-    auto    seed2soil            = readRanges(lines,"seed-to-soil map:");
-    auto    soil2fertilizer      = readRanges(lines,"soil-to-fertilizer map:");
-    auto    fertilizer2water     = readRanges(lines,"fertilizer-to-water map:");
-    auto    water2light          = readRanges(lines,"water-to-light map:");
-    auto    light2temperature    = readRanges(lines,"light-to-temperature map:");
-    auto    temperature2humidity = readRanges(lines,"temperature-to-humidity map:");
-    auto    humidity2location    = readRanges(lines,"humidity-to-location map:");
-
-
-    int64_t     minLocation{std::numeric_limits<int64_t>::max()};
-
-    for(auto &seed : seeds)
+    Almanac almanac
     {
-        seed.soil           = convert(seed.seed,        seed2soil);
-        seed.fertilizer     = convert(seed.soil,        soil2fertilizer     );
-        seed.water          = convert(seed.fertilizer,  fertilizer2water    );
-        seed.light          = convert(seed.water,       water2light         );
-        seed.temperature    = convert(seed.light,       light2temperature   );
-        seed.humidity       = convert(seed.temperature, temperature2humidity);
-        seed.location       = convert(seed.humidity,    humidity2location   );
+        .seed2soil            = readRanges(lines,"seed-to-soil map:"),
+        .soil2fertilizer      = readRanges(lines,"soil-to-fertilizer map:"),
+        .fertilizer2water     = readRanges(lines,"fertilizer-to-water map:"),
+        .water2light          = readRanges(lines,"water-to-light map:"),
+        .light2temperature    = readRanges(lines,"light-to-temperature map:"),
+        .temperature2humidity = readRanges(lines,"temperature-to-humidity map:"),
+        .humidity2location    = readRanges(lines,"humidity-to-location map:"),
+    };
 
-        minLocation = std::min(seed.location,minLocation);
-    }
-
-    std::print("Part 1 : {}\n",minLocation);
-
+    part1(lines[0], almanac);
+//  part1(lines[0], almanac);
 
 }
 catch(std::exception const &e)
