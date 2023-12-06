@@ -1,4 +1,4 @@
-#include <print>
+﻿#include <print>
 
 #include "include/codeAnalysis.h"
 #include "include/thrower.h"
@@ -34,29 +34,53 @@ Race const testRaces[]
 };
 
 
-// bah humbug to maths,  just do it ..
+/*
+    L = length of race  (ms)
+    d = distance traveled (mm)
+    t = time button is pressed for (ms)
+
+        d =  t(L-t)  
+        d =  -t² + Lt
+
+    R = record in race
+    race is won if
+
+        -t² + Lt > R
+
+        -t² + Lt - R > 0
+
+*/
+
+//  roots =  (-B ±  √(B² - 4AC)) / 2A
+std::pair<int64_t,int64_t>  roots(int64_t A, int64_t B, int64_t C)
+{
+    auto discriminant   = std::sqrt( (B * B) - ( 4 * A * C) );
+
+    auto root1          = (-B +  discriminant) / (2 * A);
+    auto root2          = (-B -  discriminant) / (2 * A);
+
+    auto roots          = std::minmax(root1,root2);
+
+    return  
+    { 
+        static_cast<int64_t>(std::floor(roots.first)),          // time of last loss at beginning
+        static_cast<int64_t>(std::ceil(roots.second)),          // time of first loss at end
+    };
+
+}
+
 auto wins(int64_t time, int64_t record)
 {
-    auto wins{0};
+    auto times = roots (-1,  time, -record);
 
-    for(int i=0;i<time;i++)
-    {
-        auto distance = i * (time-i);
-            
-        if(distance > record)
-        {
-            wins++;
-        }
-    }
-
-    return wins;
+    return (times.second - times.first)-1;
 }
 
 
 int main()
 try
 {
-    auto part1{1};
+    auto part1{1ll};
 
     for(auto &race : races)
     {
