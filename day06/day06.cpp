@@ -34,58 +34,43 @@ Race const testRaces[]
 };
 
 
+// bah humbug to maths,  just do it ..
+auto wins(int64_t time, int64_t record)
+{
+    auto wins{0};
+
+    for(int i=0;i<time;i++)
+    {
+        auto distance = i * (time-i);
+            
+        if(distance > record)
+        {
+            wins++;
+        }
+    }
+
+    return wins;
+}
+
 
 int main()
 try
 {
+    auto part1{1};
+
+    for(auto &race : races)
     {
-        auto part1{1};
-
-        for(auto &race : races)
-        {
-            auto wins{0};
-
-            for(int i=0;i<race.time;i++)
-            {
-                auto distance = i * (race.time-i);
-            
-                if(distance > race.record)
-                {
-                    wins++;
-                }
-            }
-
-            part1*=wins;
-
-        }
-
-
-        std::print("Part 1 : {}\n",part1);        
+        part1*=wins(race.time, race.record);
     }
 
+    std::print("Part 1 : {}\n",part1);       // 170000 
 
-//Time:        35     69     68     87
-//Distance:   213   1168   1086   1248
 
-    // bah humbug to maths,  just do it ..
-    {
-        auto wins{0};
-
-        auto time    =          35'696'887ll;
-        auto record  = 213'116'810'861'248ll;
-
-        for(auto i=0;i<time;i++)
-        {
-            auto distance = i * (time-i);
-            
-            if(distance > record)
-            {
-                wins++;
-            }
-        }
-
-        std::print("Part 2 : {}\n",wins);        
-    }
+    //Time:        35     69     68     87
+    //Distance:   213   1168   1086   1248
+    auto time    =          35'696'887ll;
+    auto record  = 213'116'810'861'248ll;
+    std::print("Part 2 : {}\n",wins(time,record));        
 }
 catch(std::exception const &e)
 {
