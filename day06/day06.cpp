@@ -59,7 +59,7 @@ std::pair<int64_t,int64_t>  roots(int64_t A, int64_t B, int64_t C)
     auto root1          = (-B +  discriminant) / (2 * A);
     auto root2          = (-B -  discriminant) / (2 * A);
 
-    auto roots          = std::minmax(root1,root2);
+    auto roots          = std::minmax(root1,root2);             // sort
 
     return  
     { 
@@ -89,6 +89,7 @@ try
 
     std::print("Part 1 : {}\n",part1);       // 170000 
 
+    // part 2 :  single race where the numbers are all mushed together
 
     //Time:        35     69     68     87
     //Distance:   213   1168   1086   1248
