@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{0a74b53a-97bd-4bad-b613-d4c143a98e0c}</ProjectGuid>
-    <RootNamespace>template</RootNamespace>
+    <ProjectGuid>{e2ab8677-35ce-4162-834a-b9f9f19c3990}</ProjectGuid>
+    <RootNamespace>day06</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -158,10 +158,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="day_.cpp" />
+    <ClCompile Include="day06.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="day_.txt">
+    <Text Include="day06.txt">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
