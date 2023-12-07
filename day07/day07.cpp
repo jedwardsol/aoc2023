@@ -9,6 +9,22 @@
 #include "include/getdata.h"
 #include "include/stringstuff.h"
 
+enum class Type
+{
+    HighCard,
+    Pair,
+    TwoPair,
+    ThreeOfAKind,
+    FullHouse,
+    FourOfAKind,
+    FiveOfAKind,        
+};
+
+
+
+namespace Part1
+{
+
 std::map<char,int>  faceValues
 {
     {'2',2},
@@ -27,19 +43,67 @@ std::map<char,int>  faceValues
 };
 
 
+
+auto classify(std::string_view view)
+{
+    int             counts[6]{};
+
+    std::string     s{view};
+    char            previous{};
+    int             count{}; 
+
+    std::ranges::sort(s);
+
+    for(auto c:s)
+    {
+        if(c == previous)
+        {
+            count++;
+        }
+        else
+        {
+            counts[count]++;
+            count=1;
+        }
+        previous=c;
+    }
+    counts[count]++;
+
+    if(counts[5])
+    {
+        return Type::FiveOfAKind;
+    }
+    else if(counts[4])
+    {
+        return Type::FourOfAKind;
+    }
+    else if(counts[3] && counts[2])
+    {
+        return Type::FullHouse;
+    }
+    else if(counts[3])
+    {
+        return Type::ThreeOfAKind;
+    }
+    else if(counts[2] == 2)
+    {
+        return Type::TwoPair;
+    }
+    else if(counts[2] == 1)
+    {
+        return Type::Pair;
+    }
+    else
+    {
+        return Type::HighCard;
+    }
+}
+
+
+
+
 struct Hand
 {
-    enum class Type
-    {
-        HighCard,
-        Pair,
-        TwoPair,
-        ThreeOfAKind,
-        FullHouse,
-        FourOfAKind,
-        FiveOfAKind,        
-    };
-
     Type                type;
     std::array<int,5>   cards;
     int                 bid;
@@ -47,89 +111,47 @@ struct Hand
     friend auto operator<=>(Hand const&,Hand const&)=default;
 
 
-    Hand(std::string_view  view, int bid) : bid{bid}
+    Hand(std::string_view  view, int bid) : bid{bid}, type{classify(view)}
     {
         assert(view.size()==5);
 
         std::ranges::transform(view,cards.begin(), [](char card){return faceValues[card];});
 
-        int             counts[6]{};
-
-        std::string     s{view};
-        char            previous{};
-        int             count{}; 
-
-        std::ranges::sort(s);
-
-        for(auto c:s)
-        {
-            if(c == previous)
-            {
-                count++;
-            }
-            else
-            {
-                counts[count]++;
-                count=1;
-            }
-            previous=c;
-        }
-        counts[count]++;
-
-        if(counts[5])
-        {
-            type = Type::FiveOfAKind;
-        }
-        else if(counts[4])
-        {
-            type = Type::FourOfAKind;
-        }
-        else if(counts[3] && counts[2])
-        {
-            type = Type::FullHouse;
-        }
-        else if(counts[3])
-        {
-            type = Type::ThreeOfAKind;
-        }
-        else if(counts[2] == 2)
-        {
-            type = Type::TwoPair;
-        }
-        else if(counts[2] == 1)
-        {
-            type = Type::Pair;
-        }
-        else
-        {
-            type = Type::HighCard;
-        }
     }
-
 };
+
+}
+
 
 
 int main()
 try
 {
-    std::vector<Hand>       hands;
+    std::vector<Part1::Hand>       hands1;
+    std::vector<Part1::Hand>       hands2;
+
     for(auto const &line : getDataLines())
     {
         auto [cards,bid] = splitIn2(line,' ');  //266QJ 288
 
-        hands.emplace_back(cards, stoi(bid));
+        hands1.emplace_back(cards, stoi(bid));
+        hands2.emplace_back(cards, stoi(bid));
     }
 
-    std::ranges::sort(hands);
+    std::ranges::sort(hands1);
+    std::ranges::sort(hands2);
 
-    int64_t     total{};
+    int64_t     total1{};
+    int64_t     total2{};
 
-    for(int rank=0;rank < hands.size();rank++)
+    for(int rank=0;rank < hands1.size();rank++)
     {
-        total += (rank+1) * hands[rank].bid;
+        total1 += (rank+1) * hands1[rank].bid;
+        total2 += (rank+1) * hands2[rank].bid;
     }
 
-    std::print("Part 1 : {}\n",total);
+    std::print("Part 1 : {}\n",total1);
+    std::print("Part 2 : {}\n",total2);
 
 }
 catch(std::exception const &e)
