@@ -74,7 +74,8 @@ auto part1(std::string_view     directions, Map &map)
 
 // each ghost walks from xxA to yyZ
 // they all start at a different xxA at the same time.  How long until they're all on their yyZ at the same time
-//  find each ghosts time to get to yyZ the 1st and 2nd time.  
+//  find each ghosts time to get to yyZ the 1st and 2nd time. 
+//  then use  the 2 times to work out when they'll coincide  (could be tricky,  turns out the data makes it easy)
 
 struct Ghost
 {
@@ -95,7 +96,7 @@ auto collectGhost(std::string_view     directions, Map &map, std::string const &
 
     Ghost ghost{start};
 
-    while(step < 1'000'000'000)
+    while(step < 1'000'000)
     {
         auto &element = map[pos];
         auto  turn    = directions[step % directions.size()];
