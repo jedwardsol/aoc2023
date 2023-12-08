@@ -24,7 +24,7 @@ auto readRound(std::string_view line)       // 1 red, 3 blue, 11 green
 {
     Round round{};
 
-    for (auto ball : std::views::split(line, ","))
+    for (auto ball : split(line, ","))
     {
         int         count;
         std::string colour;
