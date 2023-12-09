@@ -17,30 +17,25 @@ auto adjacentDifference(std::vector<int64_t> const &line)
 }
 
 
-int64_t nextValue(std::vector<int64_t> const &line)
+std::pair<int64_t,int64_t> nextValues(std::vector<int64_t> const &line)
 {
     if(std::ranges::count(line,0) == line.size())
     {
-        return 0;
+        return {0,0};
     }
 
     auto differences = adjacentDifference(line);
 
-    return line.back() + nextValue(differences);
-}
+    auto [previous,next] = nextValues(differences);
 
-
-int64_t previousValue(std::vector<int64_t> const &line)
-{
-    if(std::ranges::count(line,0) == line.size())
+    return 
     {
-        return 0;
-    }
-
-    auto differences = adjacentDifference(line);
-
-    return line.front() - previousValue(differences);
+        line.front() - previous,
+        line.back()  + next
+    };
 }
+
+
 
 
 
@@ -48,15 +43,18 @@ int main()
 try
 {
     auto    data=getDataGridOfInts();
+
+
     auto    part1{0ll};
     auto    part2{0ll};
 
     for(auto line : data)
     {
-        part1 += nextValue    (line);
-        part2 += previousValue(line);
-    }
+        auto [previous,next] = nextValues(line);
 
+        part1 += next;
+        part2 += previous;
+    }
 
     std::print("Part 1 : {}\n",part1);
     std::print("Part 2 : {}\n",part2);
