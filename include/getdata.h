@@ -5,6 +5,7 @@
 #include <deque>
 #include <string>
 #include <sstream>
+#include <spanstream>
 #include <filesystem>
 #include <source_location>
 namespace fs=std::filesystem;
@@ -102,12 +103,10 @@ extern std::istringstream testInput;
 
 
 
-///--- As a vector of ints
+///--- As a vector of ints  (each number on its own line)
 
-[[nodiscard]] inline auto getDataInts(TestData)
+[[nodiscard]] inline auto getDataInts(std::vector<std::string> const &lines)
 {
-    auto lines = getDataLines(TestData{});
-
     std::vector<int> data;
 
     for(auto const &line : lines)
@@ -118,19 +117,48 @@ extern std::istringstream testInput;
     return data;
 }
 
+[[nodiscard]] inline auto getDataInts(TestData)
+{
+    return getDataInts(getDataLines(TestData{}));    
+}
+
 
 [[nodiscard]] inline auto getDataInts(std::source_location const &sourceLocation = std::source_location::current())
 {
-    auto lines = getDataLines(sourceLocation);
+    return getDataInts(getDataLines(sourceLocation));    
+}
 
-    std::vector<int> data;
+
+
+///--- As a vector of vector of ints  (each line a list of numbers)
+
+[[nodiscard]] inline auto getDataGridOfInts(std::vector<std::string> const &lines)
+{
+    std::vector<std::vector<int64_t>> data;
 
     for(auto const &line : lines)
     {
-        data.push_back(std::stoi(line));
+        std::vector<int64_t>    ints;
+        std::ispanstream        stream(line);
+
+        std::copy(std::istream_iterator<int64_t>(stream), 
+                  std::istream_iterator<int64_t>{},           
+                  std::back_inserter( ints ) );
+
+        data.push_back(ints);
     }
 
     return data;
+}
 
+[[nodiscard]] inline auto getDataGridOfInts(TestData)
+{
+    return getDataGridOfInts(getDataLines(TestData{}));    
+}
+
+
+[[nodiscard]] inline auto getDataGridOfInts(std::source_location const &sourceLocation = std::source_location::current())
+{
+    return getDataGridOfInts(getDataLines(sourceLocation));    
 }
 
