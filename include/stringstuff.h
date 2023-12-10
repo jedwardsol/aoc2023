@@ -1,3 +1,4 @@
+#pragma once
 #include <tuple>
 #include <charconv>
 #include <string>
@@ -12,13 +13,18 @@
     return std::make_pair(string.substr(0,pos),string.substr(pos+1));
 }
 
+inline auto  rangeToSV(auto &&range)
+{
+    return std::string_view{range.begin(), range.end()};
+}
+
 inline auto split(std::string_view string, std::string_view  delim)
 {
     std::vector<std::string_view>  result;     
 
     for(auto const &element : std::views::split(string,delim))
     {
-        result.emplace_back(element.begin(), element.end());
+        result.emplace_back(rangeToSV(element));
     }
 
     return result;
@@ -39,6 +45,21 @@ inline auto split(std::string_view string, std::string_view  delim)
 
     return i;
 }
+
+
+[[nodiscard]] inline int64_t stoll(std::string_view  string)
+{
+    int64_t i{};
+    auto result = std::from_chars(string.data(),string.data()+string.size(),i);
+
+    if(result.ec != std::errc{})
+    {
+        throw_runtime_error("stoi from " + std::string{string});
+    }
+
+    return i;
+}
+
 
 
 // returns an int and adjusts the view to consume the characters

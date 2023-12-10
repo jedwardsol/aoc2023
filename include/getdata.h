@@ -2,14 +2,17 @@
 
 #include "thrower.h"
 #include <fstream>
-#include <deque>
 #include <string>
+#include <string_view>
 #include <sstream>
 #include <spanstream>
 #include <filesystem>
 #include <source_location>
+#include <ranges>
 namespace fs=std::filesystem;
+using namespace std::literals;
 
+#include "stringstuff.h"
 
 struct TestData{};
 using TestInput=TestData;
@@ -107,14 +110,9 @@ extern std::istringstream testInput;
 
 [[nodiscard]] inline auto getDataInts(std::vector<std::string> const &lines)
 {
-    std::vector<int> data;
-
-    for(auto const &line : lines)
-    {
-        data.push_back(std::stoi(line));
-    }
-
-    return data;
+    return   lines 
+           | std::views::transform([](auto &s) {return std::stoi(s);})
+           | std::ranges::to<std::vector>();
 }
 
 [[nodiscard]] inline auto getDataInts(TestData)
@@ -136,16 +134,12 @@ extern std::istringstream testInput;
 {
     std::vector<std::vector<int64_t>> data;
 
-    for(auto const &line : lines)
+    for(std::string_view line : lines)
     {
-        std::vector<int64_t>    ints;
-        std::ispanstream        stream(line);
-
-        std::copy(std::istream_iterator<int64_t>(stream), 
-                  std::istream_iterator<int64_t>{},           
-                  std::back_inserter( ints ) );
-
-        data.push_back(ints);
+        data.push_back(  std::views::split(line," "sv)
+                       | std::views::transform([](auto const &rng) { return rangeToSV(rng);})
+                       | std::views::transform([](auto const &sv)  { return stoll(sv);})
+                       | std::ranges::to<std::vector>());
     }
 
     return data;
