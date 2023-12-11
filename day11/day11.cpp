@@ -73,14 +73,14 @@ try
                 auto  numEmptyRows  = std::distance ( std::ranges::lower_bound(emptyRows,rowBounds.first), std::ranges::lower_bound(emptyRows,rowBounds.second));
                 auto  numEmptyCols  = std::distance ( std::ranges::lower_bound(emptyCols,colBounds.first), std::ranges::lower_bound(emptyCols,colBounds.second));
 
-                total += plainDist + (numEmptyRows*scale) + (numEmptyCols*scale);
+                total += plainDist + (numEmptyRows + numEmptyCols)*(scale-1);
             }
         }
 
         return total/2;           
     };
 
-    print("Part 1 : {}\n",findTotal(1));
+    print("Part 1 : {}\n",findTotal(2));
     print("Part 2 : {}\n",findTotal(1'000'000));
 
 
