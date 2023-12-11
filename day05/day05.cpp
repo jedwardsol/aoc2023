@@ -32,11 +32,11 @@ struct Almanac
 };
 
 
-auto readRanges(std::vector<std::string> const &lines,std::string_view  mapName)
+auto readRanges(std::vector<std::string> const &lines, std::string_view  mapName)
 {
-    auto start = std::ranges::find(lines,mapName);
+    auto start = std::ranges::find(lines, mapName);
 
-    if(start == lines.end())
+    if (start == lines.end())
     {
         throw_runtime_error("No section");
     }
@@ -45,11 +45,11 @@ auto readRanges(std::vector<std::string> const &lines,std::string_view  mapName)
 
     Map     ranges;
 
-    while(start != lines.end() && *start != ""sv)
+    while (start != lines.end() && *start != ""sv)
     {
-        std::ispanstream    stream{*start};
+        std::ispanstream    stream{ *start };
         Range               range;
-        
+
         stream >> range.destinationStart >> range.sourceStart >> range.length;
 
         ranges.push_back(range);
@@ -63,12 +63,12 @@ auto readRanges(std::vector<std::string> const &lines,std::string_view  mapName)
 
 int64_t     convert(int64_t     attribute, Map const &map)
 {
-    for(auto &range : map)
+    for (auto &range : map)
     {
-        if(    attribute >= range.sourceStart
-           &&  attribute  < range.sourceStart+range.length)
+        if (attribute >= range.sourceStart
+            && attribute < range.sourceStart + range.length)
         {
-            return range.destinationStart + (attribute-range.sourceStart);
+            return range.destinationStart + (attribute - range.sourceStart);
         }
     }
 
@@ -77,61 +77,61 @@ int64_t     convert(int64_t     attribute, Map const &map)
 
 void part1(std::string_view line, Almanac &almanac)  // seeds: 28965817 302170009
 {
-    auto [header,numbers] = splitIn2(line,':');
+    auto [header, numbers] = splitIn2(line, ':');
 
     int64_t             seed{};
-    int64_t             minLocation{std::numeric_limits<int64_t>::max()};
+    int64_t             minLocation{ std::numeric_limits<int64_t>::max() };
 
-    std::ispanstream    stream{numbers};
+    std::ispanstream    stream{ numbers };
 
-    while(stream >> seed)
+    while (stream >> seed)
     {
-        auto soil           = convert(seed,        almanac.seed2soil);
-        auto fertilizer     = convert(soil,        almanac.soil2fertilizer     );
-        auto water          = convert(fertilizer,  almanac.fertilizer2water    );
-        auto light          = convert(water,       almanac.water2light         );
-        auto temperature    = convert(light,       almanac.light2temperature   );
-        auto humidity       = convert(temperature, almanac.temperature2humidity);
-        auto location       = convert(humidity,    almanac.humidity2location   );
+        auto soil = convert(seed, almanac.seed2soil);
+        auto fertilizer = convert(soil, almanac.soil2fertilizer);
+        auto water = convert(fertilizer, almanac.fertilizer2water);
+        auto light = convert(water, almanac.water2light);
+        auto temperature = convert(light, almanac.light2temperature);
+        auto humidity = convert(temperature, almanac.temperature2humidity);
+        auto location = convert(humidity, almanac.humidity2location);
 
-        minLocation        = std::min(location,minLocation);
+        minLocation = std::min(location, minLocation);
     }
 
-    std::print("Part 1  :   {}\n",minLocation);
+    std::print("Part 1  :   {}\n", minLocation);
 }
 
 
 void part2(std::string_view line, Almanac &almanac)  // seeds: 28965817 302170009
 {
-    auto [header,numbers] = splitIn2(line,':');
+    auto [header, numbers] = splitIn2(line, ':');
 
     int64_t             start{};
     int64_t             length{};
-    int64_t             minLocation{std::numeric_limits<int64_t>::max()};
+    int64_t             minLocation{ std::numeric_limits<int64_t>::max() };
     int64_t             count{};
 
-    std::ispanstream    stream{numbers};
+    std::ispanstream    stream{ numbers };
 
     Stopwatch           sw;
 
-    while(stream >> start >> length)
+    while (stream >> start >> length)
     {
-        for(auto seed = start; seed < start+length; seed++)
+        for (auto seed = start; seed < start + length; seed++)
         {
-            auto soil           = convert(seed,        almanac.seed2soil);
-            auto fertilizer     = convert(soil,        almanac.soil2fertilizer     );
-            auto water          = convert(fertilizer,  almanac.fertilizer2water    );
-            auto light          = convert(water,       almanac.water2light         );
-            auto temperature    = convert(light,       almanac.light2temperature   );
-            auto humidity       = convert(temperature, almanac.temperature2humidity);
-            auto location       = convert(humidity,    almanac.humidity2location   );
+            auto soil = convert(seed, almanac.seed2soil);
+            auto fertilizer = convert(soil, almanac.soil2fertilizer);
+            auto water = convert(fertilizer, almanac.fertilizer2water);
+            auto light = convert(water, almanac.water2light);
+            auto temperature = convert(light, almanac.light2temperature);
+            auto humidity = convert(temperature, almanac.temperature2humidity);
+            auto location = convert(humidity, almanac.humidity2location);
 
-            minLocation        = std::min(location,minLocation);
+            minLocation = std::min(location, minLocation);
             count++;
         }
     }
 
-    std::print("Part 2  :   {}   ({} seeds in {} seconds)\n",minLocation,count,sw.seconds());
+    std::print("Part 2  :   {}   ({} seeds in {} seconds)\n", minLocation, count, sw.seconds());
 
     // Part 2  :   79004094   (1975502102 seeds in 133.305586 seconds)
     // can definitely be cleverer!
@@ -141,25 +141,25 @@ void part2(std::string_view line, Almanac &almanac)  // seeds: 28965817 30217000
 int main()
 try
 {
-    auto    lines                = getDataLines();
+    auto    lines = getDataLines();
 
     Almanac almanac
     {
-        .seed2soil            = readRanges(lines,"seed-to-soil map:"),
-        .soil2fertilizer      = readRanges(lines,"soil-to-fertilizer map:"),
-        .fertilizer2water     = readRanges(lines,"fertilizer-to-water map:"),
-        .water2light          = readRanges(lines,"water-to-light map:"),
-        .light2temperature    = readRanges(lines,"light-to-temperature map:"),
+        .seed2soil = readRanges(lines,"seed-to-soil map:"),
+        .soil2fertilizer = readRanges(lines,"soil-to-fertilizer map:"),
+        .fertilizer2water = readRanges(lines,"fertilizer-to-water map:"),
+        .water2light = readRanges(lines,"water-to-light map:"),
+        .light2temperature = readRanges(lines,"light-to-temperature map:"),
         .temperature2humidity = readRanges(lines,"temperature-to-humidity map:"),
-        .humidity2location    = readRanges(lines,"humidity-to-location map:"),
+        .humidity2location = readRanges(lines,"humidity-to-location map:"),
     };
 
     part1(lines[0], almanac);
     part2(lines[0], almanac);
 }
-catch(std::exception const &e)
+catch (std::exception const &e)
 {
-    std::print("{}",e.what());
+    std::print("{}", e.what());
 }
 
 
@@ -200,4 +200,4 @@ temperature-to-humidity map:
 humidity-to-location map:
 60 56 37
 56 93 4
-)"};
+)" };

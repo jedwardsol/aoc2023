@@ -31,17 +31,17 @@ auto readRound(std::string_view line)       // 1 red, 3 blue, 11 green
 
         std::ispanstream{ ball } >> count >> colour;
 
-        if(colour == "red")
+        if (colour == "red")
         {
             round.red = count;
         }
-        else if(colour == "green")
+        else if (colour == "green")
         {
-            round.green=count;
+            round.green = count;
         }
         else if (colour == "blue")
         {
-            round.blue=count;
+            round.blue = count;
         }
         else
         {
@@ -73,7 +73,7 @@ auto readGames()
 {
     std::vector<Game>   games;
 
-    for (auto const& line : getDataLines())
+    for (auto const &line : getDataLines())
     {
         games.push_back(readGame(line));
     }
@@ -83,30 +83,30 @@ auto readGames()
 
 
 
-int sumValidGames(std::vector<Game> const &games,  Round const &target)
+int sumValidGames(std::vector<Game> const &games, Round const &target)
 {
     int sum{};
 
-    for(auto i=0u;i<games.size();i++)
+    for (auto i = 0u; i < games.size(); i++)
     {
-        auto &game =games[i];
+        auto &game = games[i];
 
-        bool valid{true};
+        bool valid{ true };
 
-        for(auto &round : game.rounds)
+        for (auto &round : game.rounds)
         {
-            if(   round.red   > target.red
-               || round.green > target.green
-               || round.blue  > target.blue)
+            if (round.red > target.red
+                || round.green > target.green
+                || round.blue > target.blue)
             {
-                valid=false;
+                valid = false;
                 break;
             }
         }
 
-        if(valid)
+        if (valid)
         {
-            sum+=(i+1);
+            sum += (i + 1);
         }
     }
 
@@ -115,7 +115,7 @@ int sumValidGames(std::vector<Game> const &games,  Round const &target)
 
 
 
-int64_t sumGamePowers(std::vector<Game> const& games)
+int64_t sumGamePowers(std::vector<Game> const &games)
 {
     int64_t sum{};
 
@@ -123,14 +123,14 @@ int64_t sumGamePowers(std::vector<Game> const& games)
     {
         Round minimum{};
 
-        for (auto& round : game.rounds)
+        for (auto &round : game.rounds)
         {
-            minimum.red   = std::max(minimum.red,round.red);
-            minimum.blue  = std::max(minimum.blue, round.blue);
+            minimum.red = std::max(minimum.red, round.red);
+            minimum.blue = std::max(minimum.blue, round.blue);
             minimum.green = std::max(minimum.green, round.green);
         }
 
-        sum+= minimum.red*minimum.green*minimum.blue;            
+        sum += minimum.red * minimum.green * minimum.blue;
     }
 
     return sum;
@@ -143,12 +143,12 @@ try
 {
     auto games = readGames();
 
-    std::print("part 1 : {}\n", sumValidGames(games,{ 12 , 13 , 14 }));
+    std::print("part 1 : {}\n", sumValidGames(games, { 12 , 13 , 14 }));
     std::print("part 2 : {}\n", sumGamePowers(games));
 }
-catch(std::exception const &e)
+catch (std::exception const &e)
 {
-    std::print("{}",e.what());
+    std::print("{}", e.what());
 }
 
 
@@ -157,4 +157,4 @@ catch(std::exception const &e)
 // --------------------------
 std::istringstream testInput{
 R"(
-)"};
+)" };

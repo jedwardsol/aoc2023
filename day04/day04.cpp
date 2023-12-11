@@ -22,7 +22,7 @@ std::set<int> extract(std::string_view numbers)
 
     int     i;
 
-    while(stream >> i)
+    while (stream >> i)
     {
         set.insert(i);
     }
@@ -49,7 +49,7 @@ std::vector<Card> parse()
 {
     std::vector<Card>   cards;
 
-    for(auto const& line : getDataLines())
+    for (auto const &line : getDataLines())
     {
         cards.push_back(parse(line));
     }
@@ -58,13 +58,13 @@ std::vector<Card> parse()
 }
 
 
-int part1Score(Card const& card)
+int part1Score(Card const &card)
 {
     std::set<int> intersection;
 
     std::ranges::set_intersection(card.winners, card.numbers, std::inserter(intersection, intersection.begin()));
 
-    if(intersection.size() == 0)
+    if (intersection.size() == 0)
     {
         return 0;
     }
@@ -74,11 +74,11 @@ int part1Score(Card const& card)
     }
 }
 
-int part1(std::vector<Card> const& cards)
+int part1(std::vector<Card> const &cards)
 {
     int total{};
 
-    for(auto& card : cards)
+    for (auto &card : cards)
     {
         total += part1Score(card);
     }
@@ -86,7 +86,7 @@ int part1(std::vector<Card> const& cards)
     return total;
 }
 
-auto part2Score(Card const& card)
+auto part2Score(Card const &card)
 {
     std::set<int> intersection;
 
@@ -96,17 +96,17 @@ auto part2Score(Card const& card)
 }
 
 
-auto part2(std::vector<Card>& cards)
+auto part2(std::vector<Card> &cards)
 {
 
-    for(int i = 0; i < isize(cards); i++)
+    for (int i = 0; i < isize(cards); i++)
     {
-        auto& card = cards[i];
+        auto &card = cards[i];
         auto  winners = part2Score(card);
 
-        for(int j = 1; j <= winners && (i + j) < cards.size(); j++)
+        for (int j = 1; j <= winners && (i + j) < cards.size(); j++)
         {
-            cards[i+j].count += card.count;
+            cards[i + j].count += card.count;
         }
     }
 
@@ -127,7 +127,7 @@ try
     std::print("Part 2 : {}\n", part2(cards));
 
 }
-catch(std::exception const& e)
+catch (std::exception const &e)
 {
     std::print("{}", e.what());
 }

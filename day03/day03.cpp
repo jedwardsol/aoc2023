@@ -33,24 +33,24 @@ auto parse()
 
     auto const  lines = getDataLines();
 
-    for(int row = 0; row < isize(lines); row++)
+    for (int row = 0; row < isize(lines); row++)
     {
-        auto& line = lines[row];
+        auto &line = lines[row];
 
-        for(int col = 0; col < isize(line); )
+        for (int col = 0; col < isize(line); )
         {
-            if(std::isdigit(line[col]))
+            if (std::isdigit(line[col]))
             {
-                char const  *start{ &line[col] };
-                char        *end{};
+                char const *start{ &line[col] };
+                char *end{};
 
-                numbers[{row, col}] = {std::strtol(start, &end, 10), static_cast<int>(end - start)};
+                numbers[{row, col}] = { std::strtol(start, &end, 10), static_cast<int>(end - start) };
 
                 col += static_cast<int>(end - start);
             }
-            else if(line[col]!='.')
+            else if (line[col] != '.')
             {
-                symbols[{row, col}] = {line[col]};
+                symbols[{row, col}] = { line[col] };
                 col++;
             }
             else
@@ -66,16 +66,16 @@ auto parse()
 
 void findAdjacencies(Symbols &symbols, Numbers &numbers)
 {
-    for(auto &[pos,number] : numbers)
+    for (auto &[pos, number] : numbers)
     {
-        for(int row=pos.row-1; row <= pos.row+1;row++)
+        for (int row = pos.row - 1; row <= pos.row + 1; row++)
         {
-            for(int col=pos.col-1; col <= pos.col+number.len;col++)
+            for (int col = pos.col - 1; col <= pos.col + number.len; col++)
             {
-                if(symbols.contains({row,col}))
+                if (symbols.contains({ row,col }))
                 {
-                    number.nextToSymbol=true;
-                    symbols[{row,col}].adjcentNumbers.push_back(number.number);
+                    number.nextToSymbol = true;
+                    symbols[{row, col}].adjcentNumbers.push_back(number.number);
                 }
             }
         }
@@ -88,11 +88,11 @@ auto part1(Numbers const &numbers)
 {
     int sum{};
 
-    for(auto [pos,number] : numbers)
+    for (auto [pos, number] : numbers)
     {
-        if(number.nextToSymbol)
+        if (number.nextToSymbol)
         {
-            sum+=number.number;            
+            sum += number.number;
         }
     }
 
@@ -101,17 +101,17 @@ auto part1(Numbers const &numbers)
 
 
 // gears are '*' next to 2 numbers.  return sum of products of gears' neighbours
-auto part2(Symbols const &symbols,Numbers const &numbers)
+auto part2(Symbols const &symbols, Numbers const &numbers)
 {
     int sum{};
 
-    for(auto &[pos,symbol] : symbols)
+    for (auto &[pos, symbol] : symbols)
     {
-        if(   symbol.symbol                == '*'
-           && symbol.adjcentNumbers.size() == 2)
+        if (symbol.symbol == '*'
+            && symbol.adjcentNumbers.size() == 2)
         {
-            sum +=  symbol.adjcentNumbers[0]
-                  * symbol.adjcentNumbers[1];
+            sum += symbol.adjcentNumbers[0]
+                * symbol.adjcentNumbers[1];
         }
     }
 
@@ -126,13 +126,13 @@ try
 {
     auto [symbols, numbers] = parse();
 
-    findAdjacencies(symbols,numbers);
+    findAdjacencies(symbols, numbers);
 
     std::print("Part 1 = {}\n", part1(numbers));
-    std::print("Part 2 = {}\n", part2(symbols,numbers));
+    std::print("Part 2 = {}\n", part2(symbols, numbers));
 
 }
-catch(std::exception const& e)
+catch (std::exception const &e)
 {
     std::print("{}", e.what());
 }

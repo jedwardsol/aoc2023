@@ -9,13 +9,13 @@
 int main()
 try
 {
-    for(auto const &line : getDataLines())
+    for (auto const &line : getDataLines())
     {
     }
 }
-catch(std::exception const &e)
+catch (std::exception const &e)
 {
-    std::print("{}",e.what());
+    std::print("{}", e.what());
 }
 
 
@@ -24,4 +24,4 @@ catch(std::exception const &e)
 // --------------------------
 std::istringstream testInput{
 R"(
-)"};
+)" };

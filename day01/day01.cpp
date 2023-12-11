@@ -6,7 +6,7 @@
 #include "include/getdata.h"
 
 
-int valueOf1(std::string const& line)
+int valueOf1(std::string const &line)
 {
     auto first = line.find_first_of("0123456789");
     auto last = line.find_last_of("0123456789");
@@ -25,7 +25,7 @@ auto valueOf2(std::string line)
     std::array<uint64_t, 20>     forward{};         // unsigned so npos is big
     std::array< int64_t, 20>     backward{};        //   signed so npos is -ve
 
-    for(int i = 0; i < 20; i++)
+    for (int i = 0; i < 20; i++)
     {
         forward[i] = line.find(words[i]);
         backward[i] = line.rfind(words[i]);
@@ -47,7 +47,7 @@ try
     int64_t part1Sum{};
     int64_t part2Sum{};
 
-    for(auto const& line : getDataLines())
+    for (auto const &line : getDataLines())
     {
         part1Sum += valueOf1(line);
         part2Sum += valueOf2(line);
@@ -58,7 +58,7 @@ try
     std::print("Part 2 : {}\n", part2Sum);
 
 }
-catch(std::exception const& e)
+catch (std::exception const &e)
 {
     std::print("{}", e.what());
 }
