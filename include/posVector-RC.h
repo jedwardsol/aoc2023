@@ -20,6 +20,12 @@ struct Vector
         return *this;
     }
 
+    auto manhattan() const
+    {
+        return std::abs(dRow) + std::abs(dCol);
+    }
+
+
     friend bool operator== (Vector const &lhs,Vector const &rhs)=default;
     friend bool operator!= (Vector const &lhs,Vector const &rhs)=default;
     friend auto operator<=>(Vector const &lhs,Vector const &rhs)=default;
