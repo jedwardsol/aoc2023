@@ -56,26 +56,32 @@ try
     auto galaxies              = readGalaxies();
     auto [emptyRows,emptyCols] = findDarkMatter(galaxies);
 
-
-    auto total{0ll};        
-    // double count for now
-    for(auto galaxy1 : galaxies)
+    auto findTotal = [&](int64_t const scale)
     {
-        for(auto galaxy2 : galaxies)
+        auto total{0ll};        
+
+        // double count for now
+        for(auto galaxy1 : galaxies)
         {
-            auto  plainDist = (galaxy2 - galaxy1).manhattan();
+            for(auto galaxy2 : galaxies)
+            {
+                auto  plainDist     = (galaxy2 - galaxy1).manhattan();
 
-            auto  rowBounds = std::minmax(galaxy1.row, galaxy2.row);                
-            auto  colBounds = std::minmax(galaxy1.col, galaxy2.col);                
+                auto  rowBounds     = std::minmax(galaxy1.row, galaxy2.row);                
+                auto  colBounds     = std::minmax(galaxy1.col, galaxy2.col);                
 
-            auto  numEmptyRows = std::distance ( std::ranges::lower_bound(emptyRows,rowBounds.first), std::ranges::lower_bound(emptyRows,rowBounds.second));
-            auto  numEmptyCols = std::distance ( std::ranges::lower_bound(emptyCols,colBounds.first), std::ranges::lower_bound(emptyCols,colBounds.second));
+                auto  numEmptyRows  = std::distance ( std::ranges::lower_bound(emptyRows,rowBounds.first), std::ranges::lower_bound(emptyRows,rowBounds.second));
+                auto  numEmptyCols  = std::distance ( std::ranges::lower_bound(emptyCols,colBounds.first), std::ranges::lower_bound(emptyCols,colBounds.second));
 
-            total += plainDist + numEmptyRows + numEmptyCols;
+                total += plainDist + (numEmptyRows*scale) + (numEmptyCols*scale);
+            }
         }
-    }
 
-    print("Part 1 : {}\n",total/2);
+        return total/2;           
+    };
+
+    print("Part 1 : {}\n",findTotal(1));
+    print("Part 2 : {}\n",findTotal(1'000'000));
 
 
 }
