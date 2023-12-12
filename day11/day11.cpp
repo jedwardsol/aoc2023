@@ -77,7 +77,7 @@ try
                 }
             }
 
-            return total / 2;
+            return total / 2;           // correct double count
         };
 
     Stopwatch   sw;
