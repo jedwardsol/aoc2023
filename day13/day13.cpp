@@ -47,7 +47,6 @@ auto readGrids()
             {
                 grid.cols[colCount].push_back(line[colCount]);
             }
-
         }
     }
 
@@ -57,8 +56,11 @@ auto readGrids()
 
 
 
+
+
 namespace Part1
 {
+
 
 bool    trueReflection(std::vector<std::string> const &lines,  int index)
 {
@@ -82,8 +84,10 @@ bool    trueReflection(std::vector<std::string> const &lines,  int index)
 }
 
 
-std::optional<int>  findReflection(std::vector<std::string> const &lines)
+
+std::vector<int>    findReflections(std::vector<std::string> const &lines)
 {
+    std::vector<int>    reflections;
 
     for(int i=0;i<lines.size()-1;i++)
     {
@@ -91,32 +95,34 @@ std::optional<int>  findReflection(std::vector<std::string> const &lines)
         {
             if(trueReflection(lines,i))
             {
-                return i;
+                reflections.push_back(i);
             }
         }
     }
 
-    return std::nullopt;
+    return reflections;
 }
 
 
-int score(Grid const &grid)
+std::optional<int> score(Grid const &grid)
 {
     // return column  if a vertical line of symmetry
     // return 100*row if a horizontal line of symmetry
 
-    auto reflection = findReflection(grid.cols);
+    auto reflections = findReflections(grid.cols);
 
-    if(reflection)
+    if(!reflections.empty())
     {
-        return reflection.value()+1;                // 1-based indexing
+        assert(reflections.size()==1);
+        return reflections[0]+1;                // 1-based indexing
     }
 
-    reflection = findReflection(grid.rows);
+    reflections = findReflections(grid.rows);
 
-    if(reflection)
+    if(!reflections.empty())
     {
-        return (reflection.value()+1) * 100;        // 1-based indexing
+        assert(reflections.size()==1);
+        return (reflections[0]+1) * 100;        // 1-based indexing
     }
 
 
@@ -130,11 +136,82 @@ int part1(std::vector<Grid> const &grids)
 
     for(auto &grid : grids)
     {
-        total += score(grid);
+        total += score(grid).value();
     }
 
     return total;
 }
+
+}
+
+
+
+namespace Part2
+{
+
+
+std::optional<int> score(Grid &grid)
+{
+    auto const part1Score = Part1::score(grid);
+
+
+    for(int row = 0; row< grid.rows.size(); row++)
+    {
+        for(int col = 0; col< grid.rows[row].size(); col++)
+        {
+            auto originalChar = grid.rows[row][col];
+
+            auto newChar      = (originalChar== '#') ? '.' : '#';
+
+            grid.cols[col][row] = newChar;
+            auto reflections = Part1::findReflections(grid.cols);
+            grid.cols[col][row] = originalChar;
+
+            for(auto reflection : reflections)
+            {
+                auto score = reflection + 1;
+
+                if(score != part1Score)
+                {
+                    return score;
+                }
+            }
+
+
+            grid.rows[row][col] = newChar;
+            reflections = Part1::findReflections(grid.rows);
+            grid.rows[row][col] = originalChar;
+
+            for(auto reflection : reflections)
+            {
+                auto score = (reflection + 1)*100;
+
+                if(score != part1Score)
+                {
+                    return score;
+                }
+            }
+        }
+    }
+
+    return std::nullopt;
+}
+
+
+
+int part2(std::vector<Grid> &grids)
+{
+    int total{};    
+
+    for(auto &grid : grids)
+    {
+        total += score(grid).value();
+    }
+
+    return total;
+}
+
+
 
 
 }
@@ -148,7 +225,8 @@ try
 
     assert(grids.size()==100 || grids.size()==2);
 
-    print("Part 1 : {}",Part1::part1(grids));
+    print("Part 1 : {}\n",Part1::part1(grids));
+    print("Part 1 : {}\n",Part2::part2(grids));
 
 }
 catch(std::exception const &e)
