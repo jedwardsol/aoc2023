@@ -1,6 +1,7 @@
 #include <print>
 using std::print;
 #include <bitset>
+#include <cassert>
 
 #include "include/codeAnalysis.h"
 #include "include/thrower.h"
@@ -8,10 +9,12 @@ using std::print;
 
 struct Grid
 {
-    std::vector<std::bitset<32>>   rows;
-    std::vector<std::bitset<32>>   cols;
+    std::vector<std::string>   rows;
+    std::vector<std::string>   cols;
 };
 
+namespace Parse
+{
 
 auto readGrids()
 {
@@ -29,9 +32,8 @@ auto readGrids()
         }
         else
         {
-            grid.rows.emplace_back();
 
-            if(rowCount==0)
+            if(grid.cols.empty())
             {
                 for(int i=0;i<line.size();i++)
                 {
@@ -39,22 +41,48 @@ auto readGrids()
                 }
             }
 
-
-
+            grid.rows.push_back(line);
+            
             for(int colCount=0;colCount<line.size();colCount++)
             {
-                if(line[colCount]=='#')
-                {
-                    grid.rows[rowCount].set(colCount);
-                    grid.cols[colCount].set(rowCount);
-                }
+                grid.cols[colCount].push_back(line[colCount]);
             }
 
-            rowCount++;
         }
     }
 
     return grids;
+}
+}
+
+
+
+namespace Part1
+{
+
+int score(Grid const &grid)
+{
+    // return column  if a vertical line of symmetry
+    // return 100*row if a horizontal line of symmetry
+
+
+    return 1;
+}
+
+
+int part1(std::vector<Grid> const &grids)
+{
+    int total{};    
+
+    for(auto &grid : grids)
+    {
+        total += score(grid);
+    }
+
+    return total;
+}
+
+
 }
 
 
@@ -62,9 +90,11 @@ auto readGrids()
 int main()
 try
 {
-    auto grids = readGrids();
+    auto grids = Parse::readGrids();
 
-    print("Part 1 : {}",0);
+    assert(grids.size()==100);
+
+    print("Part 1 : {}",Part1::part1(grids));
 
 }
 catch(std::exception const &e)
