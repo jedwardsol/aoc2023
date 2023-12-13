@@ -60,13 +60,67 @@ auto readGrids()
 namespace Part1
 {
 
+bool    trueReflection(std::vector<std::string> const &lines,  int index)
+{
+    auto back = index;
+    auto fore = index+1;
+
+
+    while(   back >= 0
+          && fore < lines.size())
+    {
+        if(lines[back] != lines[fore])
+        {
+            return false;
+        }
+
+        back--;
+        fore++;
+    }
+
+    return true ;
+}
+
+
+std::optional<int>  findReflection(std::vector<std::string> const &lines)
+{
+
+    for(int i=0;i<lines.size()-1;i++)
+    {
+        if(lines[i] == lines[i+1])
+        {
+            if(trueReflection(lines,i))
+            {
+                return i;
+            }
+        }
+    }
+
+    return std::nullopt;
+}
+
+
 int score(Grid const &grid)
 {
     // return column  if a vertical line of symmetry
     // return 100*row if a horizontal line of symmetry
 
+    auto reflection = findReflection(grid.cols);
 
-    return 1;
+    if(reflection)
+    {
+        return reflection.value()+1;                // 1-based indexing
+    }
+
+    reflection = findReflection(grid.rows);
+
+    if(reflection)
+    {
+        return (reflection.value()+1) * 100;        // 1-based indexing
+    }
+
+
+    throw_runtime_error("No reflection");
 }
 
 
@@ -92,7 +146,7 @@ try
 {
     auto grids = Parse::readGrids();
 
-    assert(grids.size()==100);
+    assert(grids.size()==100 || grids.size()==2);
 
     print("Part 1 : {}",Part1::part1(grids));
 
@@ -107,5 +161,20 @@ catch(std::exception const &e)
 
 // --------------------------
 std::istringstream testInput{
-R"(
+R"(#.##..##.
+..#.##.#.
+##......#
+##......#
+..#.##.#.
+..##..##.
+#.#.##.#.
+
+#...##..#
+#....#..#
+..##..###
+#####.##.
+#####.##.
+..##..###
+#....#..#
+
 )"};

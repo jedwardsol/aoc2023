@@ -51,7 +51,7 @@ auto getRows()
 }
 
 
-namespace Part1
+namespace Part1Brute
 {
 
 auto countGroups(std::string_view   springs)
@@ -132,7 +132,7 @@ try
 
     for(auto row : rows)
     {
-        part1 += Part1::countArrangements(row);
+        part1 += Part1Brute::countArrangements(row);
     }
 
     print("Part 1 : {} in {:.1f}s\n",part1,sw.seconds());       // 7506 in 1.4s
