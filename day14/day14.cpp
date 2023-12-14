@@ -196,14 +196,14 @@ try
 
             if(hashes.contains(hash))
             {
-                auto loopLength    = cycle - hashes[hash];
-                auto cyclesLeft    = totalCycles - cycle;
-                auto loopsToSkip   = cyclesLeft / loopLength;
-                auto cyclesToSkip  = loopsToSkip * loopLength;
+                auto const loopLength    = cycle       - hashes[hash];
+                auto const cyclesLeft    = totalCycles - cycle;
+                auto const loopsToSkip   = cyclesLeft  / loopLength;
+                auto const cyclesToSkip  = loopsToSkip * loopLength;
 
                 print("@ cycle {} \n",cycle);
-                print(" found loop of length {} cycles \n",loopLength);
-                print(" skipping {} cycles\n",cyclesToSkip);
+                print("  found loop of length {} cycles \n",loopLength);
+                print("  skipping {} cycles\n",cyclesToSkip);
 
                 cycle += cyclesToSkip;
                 skipped=true;
