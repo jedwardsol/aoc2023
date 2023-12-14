@@ -142,4 +142,11 @@ struct Grid
     int                 width;
     int                 height;
     std::vector<T>      data;
+
+
+    auto rawData()  const
+    {
+        return std::span<T const >{data.begin(), data.begin()+data.size()};
+    }
+
 };
