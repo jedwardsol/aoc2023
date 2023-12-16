@@ -9,6 +9,7 @@ using std::print;
 #include "include/getdata.h"
 #include "include/posVector-RC.h"
 #include "include/int.h"
+#include "include/stopwatch.h"
 
 using Cave      = Grid<char>;
 
@@ -68,7 +69,6 @@ std::map<Tile, Vector>  nextDir
     {   {  down,  '/'  }    , left} ,
     {   {  down,  '\\' }    , right}, 
 
-
     {   {  right, '.'  }    , right}, 
     {   {  right, '|'  }    , upDown}, 
     {   {  right, '-'  }    , right}, 
@@ -80,7 +80,6 @@ std::map<Tile, Vector>  nextDir
     {   {  left,  '-'  }    , left}, 
     {   {  left,  '/'  }    , down} ,
     {   {  left,  '\\' }    , up}, 
-
 };
 
 
@@ -123,37 +122,41 @@ void traceBeam(Cave const &cave,Visited &visited,Pos const startPos,Vector const
         }
 
     } while(cave.inGrid(pos));
-
-
-
-
-
 }
 
-
-
-auto part1(Cave const &cave)
+auto traceBeam(Cave const &cave,Pos const startPos,Vector const startDir)
 {
     Visited visited{cave.height,cave.width};               
 
-
-    Pos     startPos{0,-1};
-    Vector  startDir{right};
-
     traceBeam(cave,visited,startPos,startDir);
-
     
-    int count{};
-    for(auto &visit : visited.rawData())
+    return std::ranges::count_if(visited.rawData(), [](auto const &visit) {return not visit.empty();});
+
+}
+
+auto part1(Cave const &cave)
+{
+    return traceBeam(cave, {0,-1}, right);
+}
+
+
+auto part2(Cave const &cave)
+{
+    int64_t best{};
+
+    for(int row = 0; row < cave.height;row++)
     {
-        if(not visit.empty())
-        {
-            count++;
-        }
+        best = std::max(best,traceBeam(cave, {row,-1},         right));
+        best = std::max(best,traceBeam(cave, {row,cave.width}, left));
     }
 
-    return count;
-//    return std::ranges::count(visited.rawData(), &std::set<Visit>::empty);
+    for(int col = 0; col < cave.width;col++)
+    {
+        best = std::max(best,traceBeam(cave, {-1,col},         down));
+        best = std::max(best,traceBeam(cave, {cave.height,col},up));
+    }
+
+    return best;
 }
 
 
@@ -162,8 +165,12 @@ try
 {
     auto cave = Parse::readCave();
 
-
     print("Part 1 : {}\n",part1(cave));
+
+    auto sw    = Stopwatch{};
+    auto best  = ::part2(cave);
+
+    print("Part 2 : {} in {}ms\n",best, sw.milliseconds());
 
 
 }
