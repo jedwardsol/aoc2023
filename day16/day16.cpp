@@ -1,6 +1,7 @@
 #include <print>
 using std::print;
 #include <algorithm>
+#include <execution>
 #include <map>
 #include <set>
 
@@ -160,6 +161,43 @@ auto part2(Cave const &cave)
 }
 
 
+
+auto part2Parallel(Cave const &cave)
+{
+    struct Beam
+    {
+        Pos         start;
+        Vector      direction;
+        int64_t     result;
+    };
+
+    std::vector<Beam>   beams;
+
+    for(int row = 0; row < cave.height;row++)
+    {
+        beams.emplace_back(Pos{row,-1},         right,0);
+        beams.emplace_back(Pos{row,cave.width}, left, 0);
+    }
+
+    for(int col = 0; col < cave.width;col++)
+    {
+        beams.emplace_back(Pos{-1,col},         down,0);
+        beams.emplace_back(Pos{cave.height,col},up,  0);
+    }
+
+    auto traceBeam = [&](Beam &beam)
+    {
+        beam.result = ::traceBeam(cave, beam.start, beam.direction);
+    };
+
+    std::for_each(std::execution::par, beams.begin(), beams.end(), traceBeam);
+
+    return std::ranges::max_element(beams, {}, &Beam::result)->result;
+}
+
+
+
+
 int main()
 try
 {
@@ -168,11 +206,10 @@ try
     print("Part 1 : {}\n",part1(cave));
 
     auto sw    = Stopwatch{};
-    auto best  = ::part2(cave);
+//  auto best  = ::part2(cave);             // 9064 in 687.7296ms
+    auto best  = ::part2Parallel(cave);     // 9064 in 74.2142ms
 
     print("Part 2 : {} in {}ms\n",best, sw.milliseconds());
-
-
 }
 catch(std::exception const &e)
 {
