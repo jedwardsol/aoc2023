@@ -89,7 +89,6 @@ void traceBeam(Cave const &cave,Visited &visited,Pos const startPos,Vector const
     Pos     pos{startPos};
     Vector  dir{startDir};
 
-
     do
     {
         pos += dir;
@@ -190,7 +189,7 @@ auto part2Parallel(Cave const &cave)
         beam.result = ::traceBeam(cave, beam.start, beam.direction);
     };
 
-    std::for_each(std::execution::par, beams.begin(), beams.end(), traceBeam);
+    std::for_each(std::execution::par_unseq, beams.begin(), beams.end(), traceBeam);
 
     return std::ranges::max_element(beams, {}, &Beam::result)->result;
 }
