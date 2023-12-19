@@ -1,10 +1,16 @@
 #include <print>
 using std::print;
+#include <cassert>
+#include <queue>
+
+
 #include "include/codeAnalysis.h"
 #include "include/thrower.h"
 #include "include/getdata.h"
 #include "include/posVector-RC.h"
-#include <cassert>
+
+
+using Lagoon = Grid<uint32_t>;
 
 struct Edge
 {
@@ -47,11 +53,8 @@ auto parse()
 }
 
 
-int main()
-try
+auto limits(std::vector<Edge> const &edges)
 {
-    auto edges = parse();
-
     Pos topLeft    {0,0};
     Pos bottomRight{0,0};
 
@@ -70,17 +73,30 @@ try
         }
     }
 
-    const int height = (bottomRight.row - topLeft.row)+3;
-    const int width  = (bottomRight.col - topLeft.col)+3;
-
-    Vector  offset{topLeft.row - 1, topLeft.col - 1 };
-
-    Grid<uint32_t>  lagoon{width,height,0};
-
-    auto pos = Pos{0,0} - offset;
+    return std::make_pair(topLeft,bottomRight);
+}
 
 
-    lagoon[pos] = 0xffffff;        
+void printLagoon(Lagoon const &lagoon)
+{
+    for(int row = 0; row < lagoon.height; row++)
+    {
+        for(int col = 0; col< lagoon.width; col++)
+        {
+            char c{' '};
+
+            if(lagoon[row][col] != 0)        c='#';
+            if(lagoon[row][col] == 0xffffff) c='=';
+
+            print("{}", c);
+        }
+        print("\n");
+    }
+}
+
+void digTrench(Lagoon &lagoon, std::vector<Edge> const &edges, Pos pos)
+{
+    lagoon[pos] = 0xffffff;     // does get covered in colour at the end     
 
     for(auto edge : edges)
     {
@@ -90,16 +106,66 @@ try
             lagoon[pos] = edge.colour;
         }
     }
+}
 
-    for(int row = 0; row < lagoon.height; row++)
+
+void digInside(Lagoon &lagoon)
+{
+    Pos     inside{lagoon.height/2, 0};
+
+    while(lagoon[inside] == 0)
     {
-        for(int col = 0; col< lagoon.width; col++)
-        {
-            print("{}", lagoon[row][col] ? '#' : ' ');
-        }
-        print("\n");
+        inside.col++;
     }
 
+    while(lagoon[inside] != 0)
+    {
+        inside.col++;
+    }
+
+
+    std::queue<Pos> flood;
+
+    flood.push(inside);
+
+
+    while(not flood.empty())
+    {
+        inside = flood.front();
+        flood.pop();
+
+        for(auto dir : { Vector{-1,0}, Vector{+1,0}, Vector{0,-1},Vector{0,1}})
+        {
+            if(lagoon[inside+dir] == 0)
+            {
+                lagoon[inside+dir] = 0xffffff;
+                flood.push(inside+dir);
+            }
+        }
+    }
+}
+
+
+int main()
+try
+{
+    auto const edges                 = parse();
+    auto const [topLeft,bottomRight] = limits(edges);
+    auto const height                = (bottomRight.row - topLeft.row)+3;
+    auto const width                 = (bottomRight.col - topLeft.col)+3;
+
+    auto const offset                = Vector{topLeft.row - 1, topLeft.col - 1 };
+
+    auto       lagoon                = Grid<uint32_t>  {width,height,0};
+
+    digTrench(lagoon,edges,Pos{0,0} - offset);
+
+    digInside(lagoon);
+    printLagoon(lagoon);
+
+    auto part1 = (width * height) - std::ranges::count(lagoon.rawData(),0);
+
+    print("Part 1 : {}\n",part1);
 
 }
 catch(std::exception const &e)
