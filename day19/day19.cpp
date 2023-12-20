@@ -15,7 +15,7 @@ struct Rule
 {
     enum class Condition
     {
-        less, greater
+        less, greater,always
     };
 
     int             attribute;          // offset into Part vector
@@ -32,7 +32,7 @@ struct Workflow
     std::string         name;
     Rules               rules;
 
-    std::string         defaultResult;
+//    std::string         defaultResult;
 };
 
 using Workflows = std::map<std::string, Workflow>;
@@ -65,14 +65,15 @@ auto parseWorkflow(std::string_view line) -> Workflows::value_type        // qhp
 
     auto rules = split(ruleSv,",");
 
+    auto lastRule =  std::string{rules.back()};
+    rules.pop_back();
+
+
     Workflow    workflow
     {
         std::string{name},
         {},
-        std::string{rules.back()}
     };
-
-    rules.pop_back();
 
 
     for(auto rule : rules)          // m<484:R
@@ -105,6 +106,10 @@ auto parseWorkflow(std::string_view line) -> Workflows::value_type        // qhp
 
         workflow.rules.push_back(rule);
     }
+
+    workflow.rules.emplace_back(0, Rule::Condition::always, 0, lastRule);
+
+
 
     return { workflow.name, workflow};
 }
@@ -151,7 +156,11 @@ auto evaluate(Workflow const &workflow, Part const &part)
 
     for(auto &rule : workflow.rules)
     {
-        if(rule.condition == Rule::Condition::less)
+        if(rule.condition == Rule::Condition::always)
+        {
+            return rule.trueResult;
+        }
+        else if(rule.condition == Rule::Condition::less)
         {
             if( part[rule.attribute] < rule.value)
             {
@@ -167,7 +176,8 @@ auto evaluate(Workflow const &workflow, Part const &part)
         }
     }
 
-    return workflow.defaultResult;
+    std::unreachable();
+
 }
 
 
