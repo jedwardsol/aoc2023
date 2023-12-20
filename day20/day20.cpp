@@ -2,6 +2,7 @@
 #include <map>
 #include <variant>
 #include <queue>
+#include <ranges>
 
 template<class... Ts> 
 struct Overload : Ts... 
@@ -14,7 +15,7 @@ struct Overload : Ts...
 #include "include/getdata.h"
 #include "include/stringstuff.h"
 
-using ModuleName = std::string;
+using ModuleName = std::string;         // we're going to do a boat-load of copies!
 
 struct Pulse
 {
@@ -79,7 +80,7 @@ auto parse()
 
 
 
-    for(auto &line : getDataLines(TestData{}))
+    for(auto &line : getDataLines())
     {
         auto [name, destinations] = splitIn2(line," -> ");
 
@@ -129,11 +130,105 @@ auto parse()
 
 
 
+
+
+
 int main()
 try
 {
-    auto  system = Parse::parse();
+    auto system         = Parse::parse();
+    auto queue          = Pulses{};
+    auto lowPulseCount = int{};
+    auto highPulseCount = int{};
 
+    auto addPulse   =  [&](Pulse pulse)
+    {
+        if(pulse.type == Pulse::Type::low)
+        {
+            lowPulseCount++;
+        }
+        else
+        {
+            highPulseCount++;
+        }
+
+//      print("{} - {} -> {}\n",pulse.source,static_cast<int>(pulse.type),pulse.destination);
+
+        queue.push(pulse);
+    };
+
+
+    for(int i=0;i<1000;i++)
+    {
+        addPulse({ Pulse::Type::low, "Button", "broadcaster"});
+
+        while(not queue.empty())
+        {
+            auto pulse = queue.front();
+            queue.pop();
+
+            auto &destinationModule = system[pulse.destination];
+
+            auto broadcaster = [&](Broadcaster &broadcaster)
+            {
+                for(auto &destination : broadcaster.destinations)
+                {
+                    addPulse({pulse.type, broadcaster.name,destination});
+                }
+            };
+
+            auto flipflop = [&](FlipFlop &flipflop)
+            {
+                if(pulse.type == Pulse::Type::low)
+                {
+                    if(flipflop.state == FlipFlop::State::off)
+                    {
+                        flipflop.state = FlipFlop::State::on;
+
+                        for(auto &destination : flipflop.destinations)
+                        {
+                            addPulse({Pulse::Type::high, flipflop.name,destination});
+                        }
+                    }
+                    else
+                    {
+                        flipflop.state = FlipFlop::State::off;
+
+                        for(auto &destination : flipflop.destinations)
+                        {
+                            addPulse({Pulse::Type::low, flipflop.name,destination});
+                        }
+                    }
+                }
+            };
+
+            auto conjunction= [&](Conjunction &conjunction)
+            {
+                conjunction.sources[pulse.source] = pulse.type;
+
+
+                if(std::ranges::contains(conjunction.sources | std::views::values, Pulse::Type::low))
+                {
+                    for(auto &destination : conjunction.destinations)
+                    {
+                        addPulse({Pulse::Type::high, conjunction.name,destination});
+                    }
+                }
+                else // all high
+                {
+                    for(auto &destination : conjunction.destinations)
+                    {
+                        addPulse({Pulse::Type::low, conjunction.name,destination});
+                    }
+                }
+            };
+
+            std::visit( Overload{broadcaster,flipflop,conjunction},destinationModule);
+
+        }
+    }
+
+    std::print("Part 1 : {}*{}={}\n",lowPulseCount,highPulseCount,lowPulseCount*highPulseCount);
 
 }
 catch(std::exception const &e)
