@@ -13,10 +13,24 @@
     return std::make_pair(string.substr(0,pos),string.substr(pos+1));
 }
 
+[[nodiscard]] inline auto splitIn2(std::string_view  string, std::string_view delimiter)
+{
+    auto pos = string.find(delimiter);
+    return std::make_pair(string.substr(0,pos),string.substr(pos+delimiter.size()));
+}
+
+
+
 inline auto  rangeToSV(auto &&range)
 {
     return std::string_view{range.begin(), range.end()};
 }
+
+inline auto  rangeToStr(auto &&range)
+{
+    return std::string{range.begin(), range.end()};
+}
+
 
 inline auto split(std::string_view string, std::string_view  delim)
 {
