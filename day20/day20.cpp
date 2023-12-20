@@ -38,7 +38,7 @@ struct FlipFlop
     };
 
     ModuleName                          name;
-    State                               state;
+    State                               state{};
     std::vector<ModuleName>             destinations;
 };
 
@@ -138,7 +138,7 @@ try
 {
     auto system         = Parse::parse();
     auto queue          = Pulses{};
-    auto lowPulseCount = int{};
+    auto lowPulseCount  = int{};
     auto highPulseCount = int{};
 
     auto addPulse   =  [&](Pulse pulse)
@@ -158,7 +158,7 @@ try
     };
 
 
-    for(int i=0;i<1000;i++)
+    for(int i=0;;i++)
     {
         addPulse({ Pulse::Type::low, "Button", "broadcaster"});
 
@@ -166,6 +166,14 @@ try
         {
             auto pulse = queue.front();
             queue.pop();
+
+            // this is one of those ones where you can map out the data and work out what the answer is 
+            if(   pulse.type == Pulse::Type::low
+               && pulse.destination == "rx")
+            {
+                std::print("Part 2 : {}\n",i+1);
+                return 1;
+            }
 
             auto &destinationModule = system[pulse.destination];
 
@@ -224,11 +232,15 @@ try
             };
 
             std::visit( Overload{broadcaster,flipflop,conjunction},destinationModule);
-
         }
+
+        if(i==999)
+        {
+            std::print("Part 1 : {}*{}={}\n",lowPulseCount,highPulseCount,lowPulseCount*highPulseCount);
+        }
+
     }
 
-    std::print("Part 1 : {}*{}={}\n",lowPulseCount,highPulseCount,lowPulseCount*highPulseCount);
 
 }
 catch(std::exception const &e)
