@@ -159,6 +159,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="day20.cpp" />
+    <ClCompile Include="day20_inheritance.cpp" />
+    <ClCompile Include="day20_variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="day20.txt">

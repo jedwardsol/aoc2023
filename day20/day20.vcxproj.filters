@@ -15,6 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="day20_variant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="day20_inheritance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="day20.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
