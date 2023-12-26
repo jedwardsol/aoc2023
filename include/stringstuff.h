@@ -112,3 +112,23 @@ inline auto split(std::string_view string, std::string_view  delim)
     
     return numbers;
 }
+
+[[nodiscard]] inline auto bigNumbersFromRegex(std::string const &line, std::string const &regex,  int numExpected)
+{
+    std::regex  matcher{regex};
+    std::smatch matches;
+
+    std::regex_match(line, matches, matcher);
+
+    if(matches.size() != numExpected+1)
+    {
+        throw_runtime_error("no match " + line);
+    }
+
+    std::vector<int64_t> numbers(numExpected);
+
+    std::transform(matches.begin()+1,matches.end(), numbers.begin(), [](std::string const &string){return std::stoll(string);});
+    
+    return numbers;
+}
+
